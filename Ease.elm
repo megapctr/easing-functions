@@ -38,7 +38,7 @@ List.map (\i -> Ease.outCubic (i/n)) [0..n]
 -}
 
 
-{-| Type alias for Easing functions.
+{-| A type alias to make it easier to refer to easing functions.
 -}
 type alias Easing =
   Float -> Float
