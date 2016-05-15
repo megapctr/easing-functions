@@ -8,7 +8,14 @@ happens at the start of the transition, easing "out" at the end, and "inOut" on 
 are meant to match the graphical examples on [easings.net](http://easings.net/).
 
 ```elm
+import Ease
+n = 10
 
+List.map (\i -> Ease.inQuad (i/n)) [0..n]
+> [0, 0.01, 0.04, 0.09, 0.16, 0.25, 0.36, 0.49, 0.64, 0.81, 1]
+
+List.map (\i -> Ease.outCubic (i/n)) [0..n]
+> [0, 0.271, 0.488, 0.657, 0.784, 0.875, 0.936, 0.973, 0.992, 0.999, 1]
 ```
 
 # Easing functions
@@ -27,8 +34,7 @@ are meant to match the graphical examples on [easings.net](http://easings.net/).
       inElastic, outElastic, inOutElastic
 
 # Combining easing functions
-@docs reverse, retour, inOut, flip
-
+@docs reverse, flip , inOut, retour
 -}
 
 
@@ -298,6 +304,8 @@ inOut e1 e2 time =
 
 
 {-| Flip an easing function. A transition that starts fast and continues slow now starts slow and continues fast.
+
+Graphically, this flips the function around x = 0.5 and then around y = 0.5.
 -}
 flip : Easing -> Easing
 flip easing time =
@@ -306,6 +314,8 @@ flip easing time =
 
 {-| Reverse an `Easing` function. If an object follows an easing function and then the reversed easing function, it
 retraces exactly the same path, backwards.
+
+Graphically, this flips the function around x = 0.5.
 -}
 reverse : Easing -> Easing
 reverse easing time =
