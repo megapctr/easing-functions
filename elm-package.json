@@ -1,13 +1,13 @@
 {
-    "version": "2.0.3",
-    "summary": "Creating animations and transitions with easing functions.",
-    "repository": "https://github.com/Dandandan/Easing.git",
+    "version": "1.0.0",
+    "summary": "Easing functions for animations.",
+    "repository": "https://github.com/elm-community/easing-functions.git",
     "license": "BSD3",
     "source-directories": [
         "."
     ],
     "exposed-modules": [
-        "Easing"
+        "Ease"
     ],
     "dependencies": {
         "elm-lang/core": "4.0.0 <= v < 5.0.0"
