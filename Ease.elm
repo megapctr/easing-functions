@@ -275,10 +275,10 @@ inElastic time =
             p =
                 0.3
 
-            t' =
+            t =
                 time - 1
         in
-            -((2 ^ (10 * t')) * sin ((t' - s) * (2 * pi) / p))
+            -((2 ^ (10 * t)) * sin ((t - s) * (2 * pi) / p))
 
 
 {-| -}
