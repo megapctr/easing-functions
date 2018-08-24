@@ -1,4 +1,19 @@
-module Ease exposing (Easing, reverse, retour, inOut, flip, bezier, linear, inQuad, outQuad, inOutQuad, inCubic, outCubic, inOutCubic, inQuart, outQuart, inOutQuart, inQuint, outQuint, inOutQuint, inSine, outSine, inOutSine, inExpo, outExpo, inOutExpo, inCirc, outCirc, inOutCirc, inBack, outBack, inOutBack, inBounce, outBounce, inOutBounce, inElastic, outElastic, inOutElastic)
+module Ease exposing
+    ( Easing
+    , bezier
+    , linear
+    , inQuad, outQuad, inOutQuad
+    , inCubic, outCubic, inOutCubic
+    , inQuart, outQuart, inOutQuart
+    , inQuint, outQuint, inOutQuint
+    , inSine, outSine, inOutSine
+    , inExpo, outExpo, inOutExpo
+    , inCirc, outCirc, inOutCirc
+    , inBack, outBack, inOutBack
+    , inBounce, outBounce, inOutBounce
+    , inElastic, outElastic, inOutElastic
+    , reverse, flip, inOut, retour
+    )
 
 {-| An easing function is used in animation to make a transition between two values appear more lifelike or interesting.
 Easing functions can make sliding panels or bouncing menus appear to be physical objects.
@@ -7,34 +22,39 @@ All easing functions expect inputs to be bewteen zero and one, and will typicall
 happens at the start of the transition, easing "out" at the end, and "inOut" on both sides. The functions provided here
 are meant to match the graphical examples on [easings.net](http://easings.net/).
 
-```elm
-import Ease
-n = 10
+    import Ease
+    n = 10
 
-List.map (\i -> Ease.inQuad (i/n)) [0..n]
-> [0, 0.01, 0.04, 0.09, 0.16, 0.25, 0.36, 0.49, 0.64, 0.81, 1]
+    List.map (\i -> Ease.inQuad (toFloat i / n)) (List.range 0 n)
 
-List.map (\i -> Ease.outCubic (i/n)) [0..n]
-> [0, 0.271, 0.488, 0.657, 0.784, 0.875, 0.936, 0.973, 0.992, 0.999, 1]
-```
+    --> [0, 0.01, 0.04, 0.09, 0.16, 0.25, 0.36, 0.49, 0.64, 0.81, 1]
+
+    List.map (\i -> Ease.outCubic (toFloat i / n)) (List.range 0 n)
+
+    --> [0, 0.271, 0.488, 0.657, 0.784, 0.875, 0.936, 0.973, 0.992, 0.999, 1]
+
 
 # Easing functions
-@docs Easing,
-      bezier,
-      linear,
-      inQuad, outQuad, inOutQuad,
-      inCubic, outCubic, inOutCubic,
-      inQuart, outQuart, inOutQuart,
-      inQuint, outQuint, inOutQuint,
-      inSine, outSine, inOutSine,
-      inExpo, outExpo, inOutExpo,
-      inCirc, outCirc, inOutCirc,
-      inBack, outBack, inOutBack,
-      inBounce, outBounce, inOutBounce,
-      inElastic, outElastic, inOutElastic
+
+@docs Easing
+@docs bezier
+@docs linear
+@docs inQuad, outQuad, inOutQuad
+@docs inCubic, outCubic, inOutCubic
+@docs inQuart, outQuart, inOutQuart
+@docs inQuint, outQuint, inOutQuint
+@docs inSine, outSine, inOutSine
+@docs inExpo, outExpo, inOutExpo
+@docs inCirc, outCirc, inOutCirc
+@docs inBack, outBack, inOutBack
+@docs inBounce, outBounce, inOutBounce
+@docs inElastic, outElastic, inOutElastic
+
 
 # Combining easing functions
-@docs reverse, flip , inOut, retour
+
+@docs reverse, flip, inOut, retour
+
 -}
 
 
@@ -54,6 +74,7 @@ linear =
 {-| A cubic bezier function using 4 parameters: x and y position of first control point, and x and y position of second control point.
 
 See [here](http://greweb.me/glsl-transition/example/ "glsl-transitions") for examples or [here](http://cubic-bezier.com/ "tester") to test.
+
 -}
 bezier : Float -> Float -> Float -> Float -> Easing
 bezier x1 y1 x2 y2 time =
@@ -73,7 +94,7 @@ bezier x1 y1 x2 y2 time =
                     List.map2 (\x y -> pair lerp x y time) xs (Maybe.withDefault [] (List.tail xs))
                         |> casteljau
     in
-        casteljau [ ( 0, 0 ), ( x1, y1 ), ( x2, y2 ), ( 1, 1 ) ]
+    casteljau [ ( 0, 0 ), ( x1, y1 ), ( x2, y2 ), ( 1, 1 ) ]
 
 
 {-| -}
@@ -172,6 +193,7 @@ inExpo time =
     if time == 0.0 then
         0.0
         -- exact zero instead of 2^-10
+
     else
         2 ^ (10 * (time - 1))
 
@@ -246,14 +268,17 @@ outBounce time =
         t4 =
             time - (2.625 / 2.75)
     in
-        if time < 1 / 2.75 then
-            a * time * time
-        else if time < 2 / 2.75 then
-            a * t2 * t2 + 0.75
-        else if time < 2.5 / 2.75 then
-            a * t3 * t3 + 0.9375
-        else
-            a * t4 * t4 + 0.984375
+    if time < 1 / 2.75 then
+        a * time * time
+
+    else if time < 2 / 2.75 then
+        a * t2 * t2 + 0.75
+
+    else if time < 2.5 / 2.75 then
+        a * t3 * t3 + 0.9375
+
+    else
+        a * t4 * t4 + 0.984375
 
 
 {-| -}
@@ -267,6 +292,7 @@ inElastic : Easing
 inElastic time =
     if time == 0.0 then
         0.0
+
     else
         let
             s =
@@ -278,7 +304,7 @@ inElastic time =
             t =
                 time - 1
         in
-            -((2 ^ (10 * t)) * sin ((t - s) * (2 * pi) / p))
+        -((2 ^ (10 * t)) * sin ((t - s) * (2 * pi) / p))
 
 
 {-| -}
@@ -299,6 +325,7 @@ inOut : Easing -> Easing -> Easing
 inOut e1 e2 time =
     if time < 0.5 then
         e1 (time * 2) / 2
+
     else
         0.5 + e2 ((time - 0.5) * 2) / 2
 
@@ -306,6 +333,7 @@ inOut e1 e2 time =
 {-| Flip an easing function. A transition that starts fast and continues slow now starts slow and continues fast.
 
 Graphically, this flips the function around x = 0.5 and then around y = 0.5.
+
 -}
 flip : Easing -> Easing
 flip easing time =
@@ -316,6 +344,7 @@ flip easing time =
 retraces exactly the same path, backwards.
 
 Graphically, this flips the function around x = 0.5.
+
 -}
 reverse : Easing -> Easing
 reverse easing time =
@@ -329,6 +358,7 @@ retour : Easing -> Easing
 retour easing time =
     if time < 0.5 then
         easing (time * 2)
+
     else
         (time - 0.5)
             * 2
