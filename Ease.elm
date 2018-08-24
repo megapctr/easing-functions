@@ -25,13 +25,13 @@ are meant to match the graphical examples on [easings.net](http://easings.net/).
     import Ease
     n = 10
 
-    List.map (\i -> Ease.inQuad (i/n)) [0..n]
+    List.map (\i -> Ease.inQuad (toFloat i / n)) (List.range 0 n)
 
-    > [0, 0.01, 0.04, 0.09, 0.16, 0.25, 0.36, 0.49, 0.64, 0.81, 1]
+    --> [0, 0.01, 0.04, 0.09, 0.16, 0.25, 0.36, 0.49, 0.64, 0.81, 1]
 
-    List.map (\i -> Ease.outCubic (i/n)) [0..n]
+    List.map (\i -> Ease.outCubic (toFloat i / n)) (List.range 0 n)
 
-    > [0, 0.271, 0.488, 0.657, 0.784, 0.875, 0.936, 0.973, 0.992, 0.999, 1]
+    --> [0, 0.271, 0.488, 0.657, 0.784, 0.875, 0.936, 0.973, 0.992, 0.999, 1]
 
 
 # Easing functions
