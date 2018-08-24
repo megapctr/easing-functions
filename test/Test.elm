@@ -1,10 +1,8 @@
-module Test exposing (..)
+module Test exposing (main)
 
 import Ease exposing (..)
-import Collage exposing (..)
-import Element exposing (toHtml)
-import Text
-import Color exposing (gray, black)
+import Svg exposing (Svg)
+import Svg.Attributes as SvgAttributes
 
 
 width =
@@ -15,37 +13,98 @@ height =
     64
 
 
-plot : Int -> ( Easing, String ) -> Form
+plot : Int -> ( Easing, String ) -> Svg a
 plot i ( f, name ) =
-    group
-        [ rect width 1 |> filled gray
-        , rect width 1 |> filled gray |> moveY height
-        , List.map
-            (toFloat >> (\x -> ( x - width / 2, f (x / width) * height )))
-            (List.range 0 (round width))
-            |> path
-            |> traced (solid black)
-          --|> (\ls -> {ls | width = 3}),
-        , Text.fromString name |> text |> moveY (height + 8)
+    Svg.g
+        [ SvgAttributes.transform
+            ("translate("
+                ++ String.fromInt ((width + 10) * modBy 6 i)
+                ++ ","
+                ++ String.fromInt ((height + 50) * (i // 6))
+                ++ ")"
+            )
         ]
-        |> move ( (width + 10) * (i % 6) |> toFloat, (-height - 20) * (i // 6) |> toFloat )
+        [ Svg.rect
+            [ SvgAttributes.width (String.fromInt width)
+            , SvgAttributes.height (String.fromInt 1)
+            , SvgAttributes.fill "gray"
+            ]
+            []
+        , Svg.rect
+            [ SvgAttributes.width (String.fromInt width)
+            , SvgAttributes.height (String.fromInt 1)
+            , SvgAttributes.y (String.fromInt height)
+            , SvgAttributes.fill "gray"
+            ]
+            []
+        , Svg.path
+            [ List.map
+                (toFloat
+                    >> (\x ->
+                            ( x
+                            , height - f (x / width) * height
+                            )
+                       )
+                )
+                (List.range 0 (round width))
+                |> path
+                |> SvgAttributes.d
+            , SvgAttributes.stroke "black"
+            , SvgAttributes.strokeWidth "2"
+            , SvgAttributes.fill "transparent"
+            ]
+            []
+        , Svg.text_
+            [ SvgAttributes.y (String.fromInt -15)
+            , SvgAttributes.x (String.fromInt 30)
+            , SvgAttributes.style "font: 14px sans-serif;"
+            ]
+            [ Svg.text name ]
+        ]
 
 
+path : List ( Float, Float ) -> String
+path list =
+    case list of
+        ( x, y ) :: tail ->
+            "M"
+                ++ String.fromFloat x
+                ++ ","
+                ++ String.fromFloat y
+                ++ String.join ""
+                    (List.map
+                        (\( a, b ) ->
+                            "L"
+                                ++ String.fromFloat a
+                                ++ ","
+                                ++ String.fromFloat b
+                        )
+                        tail
+                    )
+
+        _ ->
+            ""
+
+
+title : Svg a
 title =
-    Text.fromString "This is a replication of easings.net for testing purposes. You can see the plots are nearly identical."
-        |> text
-        |> move ( 200, height + 30 )
+    Svg.text_
+        [ SvgAttributes.y "-60"
+        , SvgAttributes.x "80"
+        , SvgAttributes.style "font: 14px sans-serif;"
+        ]
+        [ Svg.text "This is a replication of easings.net for testing purposes. You can see the plots are nearly identical." ]
 
 
+main : Svg a
 main =
-    let
-        forms =
-            title :: List.indexedMap plot easingFunctions
-
-        grouped =
-            group forms |> move ( -200, 300 )
-    in
-        collage 1000 1000 [ grouped ] |> toHtml
+    Svg.svg
+        [ SvgAttributes.width "850"
+        , SvgAttributes.height "650"
+        , SvgAttributes.viewBox "-10 -60 840 590"
+        , SvgAttributes.style "display:block;margin:auto;"
+        ]
+        (title :: List.indexedMap plot easingFunctions)
 
 
 easingFunctions =
