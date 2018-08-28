@@ -3,7 +3,7 @@
     "name": "elm-community/easing-functions",
     "summary": "Easing functions for animations.",
     "license": "BSD-3-Clause",
-    "version": "1.0.2",
+    "version": "2.0.0",
     "exposed-modules": [
         "Ease"
     ],
