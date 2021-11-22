@@ -100,8 +100,8 @@ main : Svg a
 main =
     Svg.svg
         [ SvgAttributes.width "850"
-        , SvgAttributes.height "650"
-        , SvgAttributes.viewBox "-10 -60 840 590"
+        , SvgAttributes.height "760"
+        , SvgAttributes.viewBox "-10 -60 840 700"
         , SvgAttributes.style "display:block;margin:auto;"
         ]
         (title :: List.indexedMap plot easingFunctions)
@@ -138,4 +138,10 @@ easingFunctions =
     , ( inBounce, "inBounce" )
     , ( outBounce, "outBounce" )
     , ( inOutBounce, "inOutBounce" )
+    , ( bezier 1 0 0 1, "bezier 1" )
+    , ( bezier 1 0 0 0, "bezier 2" )
+    , ( bezier 0 0 0 1, "bezier 3" )
+    , ( bezier 0 1 1 0, "bezier 4" )
+    , ( bezier 1 1 1 0, "bezier 5" )
+    , ( bezier 1 1 0 1, "bezier 6" )
     ]
