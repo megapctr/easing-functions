@@ -73,28 +73,93 @@ linear =
 
 {-| A cubic bezier function using 4 parameters: x and y position of first control point, and x and y position of second control point.
 
-See [here](http://greweb.me/glsl-transition/example/ "glsl-transitions") for examples or [here](http://cubic-bezier.com/ "tester") to test.
+See [here](http://cubic-bezier.com/ "tester") to test.
 
 -}
 bezier : Float -> Float -> Float -> Float -> Easing
 bezier x1 y1 x2 y2 time =
     let
-        lerp from to v =
-            from + (to - from) * v
+        f =
+            bezierPoint x1 y1 x2 y2
 
-        pair interpolate ( a0, b0 ) ( a1, b1 ) v =
-            ( interpolate a0 a1 v, interpolate b0 b1 v )
-
-        casteljau ps =
-            case ps of
-                [ ( x, y ) ] ->
-                    y
-
-                xs ->
-                    List.map2 (\x y -> pair lerp x y time) xs (Maybe.withDefault [] (List.tail xs))
-                        |> casteljau
+        numSteps =
+            -- performance/quality tradeoff, 8 steps should be good enough in most cases
+            8
     in
-    casteljau [ ( 0, 0 ), ( x1, y1 ), ( x2, y2 ), ( 1, 1 ) ]
+    if time == 0 then
+        0
+
+    else if time == 1 then
+        1
+
+    else
+        bezierHelper numSteps f time ( 0, 1 )
+
+
+{-| Use binary search to find such `tMid` that the `x` coordinate of `f tMid` is as close to `t` as
+possible, then return the `y` coordinate.
+-}
+bezierHelper : Int -> (Float -> ( Float, Float )) -> Float -> ( Float, Float ) -> Float
+bezierHelper steps f t ( tMin, tMax ) =
+    let
+        tMid =
+            (tMin + tMax) / 2
+
+        ( x, y ) =
+            f tMid
+    in
+    if steps == 0 || x == t then
+        y
+
+    else
+        let
+            newRange =
+                if x < t then
+                    ( tMid, tMax )
+
+                else
+                    ( tMin, tMid )
+        in
+        bezierHelper (steps - 1) f t newRange
+
+
+{-| Calculates the (x, y) coordinates of a point of a [ (0, 0), a, b, (1, 1) ] cubic bezier for
+given time in <0, 1> range.
+
+Based on [this gif on wikipedia](https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Higher-order_curves)
+
+-}
+bezierPoint : Float -> Float -> Float -> Float -> Float -> ( Float, Float )
+bezierPoint xa ya xb yb time =
+    let
+        q0 =
+            interpolate2d ( 0, 0 ) ( xa, ya ) time
+
+        q1 =
+            interpolate2d ( xa, ya ) ( xb, yb ) time
+
+        q2 =
+            interpolate2d ( xb, yb ) ( 1, 1 ) time
+
+        r0 =
+            interpolate2d q0 q1 time
+
+        r1 =
+            interpolate2d q1 q2 time
+
+        b =
+            interpolate2d r0 r1 time
+    in
+    b
+
+
+{-| Return a point on line segment (a, b) for given t in <0, 1> range
+-}
+interpolate2d : ( Float, Float ) -> ( Float, Float ) -> Float -> ( Float, Float )
+interpolate2d ( xa, ya ) ( xb, yb ) t =
+    ( xa + t * (xb - xa)
+    , ya + t * (yb - ya)
+    )
 
 
 {-| -}
