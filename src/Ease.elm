@@ -77,7 +77,7 @@ See [here](http://cubic-bezier.com/ "tester") to test.
 
 -}
 bezier : Float -> Float -> Float -> Float -> Easing
-bezier x1 y1 x2 y2 time =
+bezier x1 y1 x2 y2 =
     let
         f =
             bezierPoint x1 y1 x2 y2
@@ -86,13 +86,7 @@ bezier x1 y1 x2 y2 time =
             -- performance/quality tradeoff, 8 steps should be good enough in most cases
             8
     in
-    if time == 0 then
-        0
-
-    else if time == 1 then
-        1
-
-    else
+    \time ->
         bezierHelper numSteps f time ( 0, 1 )
 
 
@@ -108,7 +102,7 @@ bezierHelper steps f t ( tMin, tMax ) =
         ( x, y ) =
             f tMid
     in
-    if steps == 0 || x == t then
+    if steps == 0 then
         y
 
     else
